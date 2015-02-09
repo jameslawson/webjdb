@@ -1,6 +1,6 @@
 # webjdb
 *Java debugging in your browser.*    
-Uses the Java Debugger Interface and websockets so that you can debug a java program from within a web browser. 
+Uses the [Java Debugger Interface](http://docs.oracle.com/javase/7/docs/jdk/api/jpda/jdi/) and websockets so that you can debug a java program from within a web browser. 
 
 **Potential Advantages**
 - Customizable - for those who want to write javascript to customize a debugger's UI 
@@ -35,12 +35,13 @@ You may need to set your `JAVA_HOME` environment variable:
 
 
 ### Getting started
-1. clone the repo. cd to the root of the project.
+1. clone the repo then cd to the root of the project.
 2. Install gradle `brew install gradle`.
-3. Run the target application, telling it to listen on port 5050: `runtarget.sh`
-4. Build and run the webserver+debugger `gradlew bootRun`
-5. Open your browser at localhost:8080
-6. Click connect
+3. Compile the target `javac -g Target.java` (-g flag needed, it adds debug info)
+4. Run the target application, telling it to listen on port 5050: `runtarget.sh`
+5. Build and run the webserver+debugger `gradlew bootRun`
+6. Open your browser at localhost:8080
+7. Click connect
 
 After the above five steps, the debugger should have connected to the target, Target.java 
 (the program we are debugging), 
