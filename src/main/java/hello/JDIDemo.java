@@ -1,7 +1,9 @@
 package hello;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
@@ -19,18 +21,23 @@ import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.VirtualMachineManager;
 import com.sun.jdi.connect.AttachingConnector;
 import com.sun.jdi.connect.Connector;
+
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
-import com.sun.jdi.request.ClassPrepareRequest;
-import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventIterator;
 import com.sun.jdi.event.EventQueue;
 import com.sun.jdi.event.EventSet;
-import com.sun.jdi.event.ClassPrepareEvent;
-import com.sun.jdi.event.BreakpointEvent;
 import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
+
+import com.sun.jdi.request.ClassPrepareRequest;
+import com.sun.jdi.event.ClassPrepareEvent;
+import com.sun.jdi.request.BreakpointRequest;
+import com.sun.jdi.event.BreakpointEvent;
+import com.sun.jdi.request.StepRequest;
+import com.sun.jdi.event.StepEvent;
+
 import java.io.InputStream;
 import java.io.IOException;
 import org.springframework.context.annotation.Scope;
@@ -42,6 +49,9 @@ public class JDIDemo
 {
 
     private GreetingController greetingController;
+    private VirtualMachine virtualMachine;
+    private ThreadReference currentThread;
+    private boolean suspended = true;
 
     public VirtualMachine connect(int port, GreetingController controller) 
     {
@@ -72,6 +82,15 @@ public class JDIDemo
             vm = connector.attach(params); 
             if (vm == null) { System.out.println("Failed to connect to VM."); return null; }
             System.out.println("Attached to process '" + vm.name() + "'");
+            virtualMachine = vm;
+            List<ThreadReference> threads = virtualMachine.allThreads();
+            ThreadReference thread = null;
+            for (ThreadReference t : threads) { 
+                if (t.uniqueID() == 1) {
+                    currentThread = t;
+                }
+            }
+            if (currentThread == null) { System.out.println("Could not find thread."); return null; }
             return vm;
         } 
         catch (IOException e) { }
@@ -80,11 +99,67 @@ public class JDIDemo
         // System.out.println("JVM version='" + vm.version() + "'");
         return null;
     }
+
+    public void resume() {
+        virtualMachine.resume();
+    }
+
+    public void suspend() {
+        virtualMachine.suspend();
+    }
+
+    public void requestStep() 
+    {
+        deleteStepRequests();
+        System.out.println("STEP REQUESTED");
+        EventRequestManager requestManager = virtualMachine.eventRequestManager();
+        StepRequest req = requestManager.createStepRequest(currentThread,
+                StepRequest.STEP_LINE, StepRequest.STEP_OVER);
+        req.addClassFilter("Target");
+        req.addCountFilter(1);
+        req.setSuspendPolicy(EventRequest.SUSPEND_ALL);
+        req.enable();
+        System.out.println("STEP REQUEST SENT");
+    }
+
+    public void deleteStepRequests() {
+        EventRequestManager manager = virtualMachine.eventRequestManager();
+        List<StepRequest> requests = manager.stepRequests();
+        if (requests.size() > 0) {
+            List<StepRequest> toDelete = new ArrayList<StepRequest>(requests.size());
+            for (StepRequest r : requests) {
+                ThreadReference thread = r.thread();
+                if (thread.status() != ThreadReference.THREAD_STATUS_UNKNOWN) {
+                    toDelete.add(r);
+                }
+            }
+            manager.deleteEventRequests(toDelete);
+        }
+    }
+
+    public String frameToString() {
+        try {
+            StackFrame frame = currentThread.frame(0);
+            List<LocalVariable> vars = frame.visibleVariables();
+            StringBuilder s = new StringBuilder();
+            for (LocalVariable v : vars) {
+                Value val = frame.getValue(v);
+                if (val instanceof IntegerValue) {
+                    int eval = ((IntegerValue)val).value();
+                    s.append(v.name() + "= '" + eval + "'");
+                }
+            }
+            return s.toString();
+        } catch (AbsentInformationException e) {
+        } catch (IncompatibleThreadStateException e) {
+        }
+        return null;
+    }
+
     
     public void startDebugging(VirtualMachine vm)
     {
-
-        vm.resume();
+        this.resume();
         EventRequestManager requestManager = vm.eventRequestManager();
         ClassPrepareRequest req = requestManager.createClassPrepareRequest();
         req.addClassFilter("Target");
@@ -96,18 +171,21 @@ public class JDIDemo
             try {
                 EventSet events = queue.remove();
                 for (Event e : events) {
-                    if (e instanceof VMDeathEvent || 
-                            e instanceof VMDisconnectEvent) {
+                    if (e instanceof VMDeathEvent) {
+                        System.out.println("DISCONNECTED (VMDEATH)");
                         return;
-                            }
+                    } 
+                    if (e instanceof VMDisconnectEvent) {
+                        System.out.println("DISCONNECTED (VMDISCONNECT)");
+                        return;
+                    }
                     else if (e instanceof ClassPrepareEvent) 
                     {
-                        System.out.println("YOOOOOO");
                         ClassPrepareEvent event = (ClassPrepareEvent) e;
                         ClassType ref = (ClassType)event.referenceType();
                         System.out.println("The class loaded is " + ref.name());
                         //
-                        List<Location> locs = ref.locationsOfLine(4);
+                        List<Location> locs = ref.locationsOfLine(3);
                         if (locs.size() == 0) {
                             System.out.println("Adding Breakpoint failed");
                             return;
@@ -115,29 +193,48 @@ public class JDIDemo
                         Location loc = locs.get(0);
                         EventRequestManager erm = vm.eventRequestManager();
                         BreakpointRequest breakpointRequest = erm.createBreakpointRequest(loc);
+                        breakpointRequest.setSuspendPolicy(EventRequest.SUSPEND_ALL);
                         breakpointRequest.setEnabled(true);
                     } 
                     else if (e instanceof BreakpointEvent) 
                     {
+                        System.out.println("BREAKPOINT EVENT");
                         BreakpointEvent event = (BreakpointEvent)e;
                         ThreadReference thread = event.thread();
+                        System.out.println("target thread id:" + thread.uniqueID());
                         if (thread.frameCount() == 0) {
                             System.out.println("Adding Breakpoint failed 2");
                         }
                         StackFrame frame = thread.frame(0);
                         List<LocalVariable> vars = frame.visibleVariables();
                         for (LocalVariable v : vars) {
-                            if (v.name().equals("test")) {
+                            System.out.println(v.name());
+                            if (v.name().equals("test1")) {
                                 Value val = frame.getValue(v);
                                 if (val instanceof IntegerValue) {
-                                    System.out.println("FOOOO");
                                     int eval = ((IntegerValue)val).value();
-                                    System.out.println("test" + " = '" + eval + "'");
-                                    greetingController.fireGreeting("test " + "= '" + eval + "'");
+                                    greetingController.fireGreeting("test2 " + "= '" + eval + "'");
                                 }
                             }
                         }
-                        vm.resume();
+                        final String sourcePath = event.location().sourcePath();
+                        final int lineNumber = event.location().lineNumber();
+                        final String method = event.location().method().toString();
+                        final String lineKey = sourcePath + ":" + method  + ":" + lineNumber;
+                        greetingController.fireGreeting("Breakpoint hit. " + lineKey);
+                        this.suspend();
+                    }
+                    else if (e instanceof StepEvent)
+                    {
+                        StepEvent event = (StepEvent)e;
+                        System.out.println("STEP EVENT.");
+                        final String sourcePath = event.location().sourcePath();
+                        final int lineNumber = event.location().lineNumber();
+                        final String method = event.location().method().toString();
+                        final String lineKey = sourcePath + ":" + method  + ":" + lineNumber;
+                        greetingController.fireGreeting("Step hit. " + lineKey);
+                        this.suspend();
+                        greetingController.onStep();
                     }
                 }
                 events.resume();

@@ -31,11 +31,34 @@ public class GreetingController {
         debugger.startDebugging(debugger.connect(5050, this));
     }
 
+    @MessageMapping("/step")
+    public void step(){
+        debugger.requestStep();
+        debugger.resume();
+    }
+
+    @MessageMapping("/suspend")
+    public void suspend(){
+        debugger.suspend();
+    }
+    @MessageMapping("/resume")
+    public void resume(){
+        debugger.resume();
+    }
+
+    @MessageMapping("/printframe")
+    @SendTo("/topic/greetings")
+    public Greeting printFrame() throws Exception {
+        return new Greeting(debugger.frameToString());
+    }
+
+    public void onStep() {
+        template.convertAndSend("/topic/greetings", new Greeting(debugger.frameToString()));
+    }
+
     public void fireGreeting(String message) {
         System.out.println(message);
         template.convertAndSend("/topic/greetings", new Greeting(message));
-        // template.convertAndSend("/topic/greetings", "wazzzap");
-        // template.convertAndSend("/topic/foobar", "wazzzap");
     }
 
 }

@@ -10,6 +10,7 @@
         function setConnected(connected) {
             document.getElementById('connect').disabled = connected;
             document.getElementById('disconnect').disabled = !connected;
+            document.getElementById('step').disabled = !connected;
             document.getElementById('conversationDiv').style.visibility = connected ? 'visible' : 'hidden';
             document.getElementById('response').innerHTML = '';
         }
@@ -30,7 +31,23 @@
                     console.log(greeting);
                 });
                 stompClient.send("/app/start", {}, JSON.stringify({ 'name': name }));
+                socket.onclose = function() {
+                    disconnect();
+                }
             });
+        }
+
+        function step() {
+            stompClient.send("/app/step", {}, '');
+        }
+        function suspend() {
+            stompClient.send("/app/suspend", {}, '');
+        }
+        function resume() {
+            stompClient.send("/app/resume", {}, '');
+        }
+        function printframe() {
+            stompClient.send("/app/printframe", {}, '');
         }
 
         function disconnect() {
@@ -59,11 +76,17 @@
 <div>
     <div>
         <button id="connect" onclick="connect();">Connect</button>
+        <button id="step" onclick="step();">Step</button>
+        <button id="printframe" onclick="printframe();">Print Frame</button>
         <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
     </div>
+    <!-- <div> -->
+    <!--     <button id="suspend" onclick="suspend();">Suspend</button> -->
+    <!--     <button id="resume" onclick="resume();">Resume</button> -->
+    <!-- </div> -->
     <div id="conversationDiv">
-        <label>What is your name?</label><input type="text" id="name" />
-        <button id="sendName" onclick="sendName();">Send</button>
+        <!-- <label>What is your name?</label><input type="text" id="name" /> -->
+        <!-- <button id="sendName" onclick="sendName();">Send</button> -->
         <p id="response"></p>
     </div>
 </div>
