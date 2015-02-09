@@ -39,7 +39,7 @@ You may need to set your `JAVA_HOME` environment variable:
 2. Install gradle `brew install gradle`.
 3. Compile the target `javac -g Target.java` (-g flag needed, it adds debug info)
 4. Run the target application, telling it to listen on port 5050: `runtarget.sh`
-5. Build and run the webserver+debugger `gradlew bootRun`
+5. Build and run the webserver+debugger `./gradlew bootRun`
 6. Open your browser at localhost:8080
 7. Click connect
 
