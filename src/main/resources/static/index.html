@@ -26,9 +26,9 @@
                     console.log(greeting);
                     showGreeting(JSON.parse(greeting.body).content);
                 });
-                stompClient.subscribe('/topic/foobar', function(greeting){
-                    console.log('Foobar received!');
-                    console.log(greeting);
+                stompClient.subscribe('/topic/stackframe', function(frame){
+                    console.log('Stack frame received!');
+                    console.log(frame);
                 });
                 stompClient.send("/app/start", {}, JSON.stringify({ 'name': name }));
                 socket.onclose = function() {

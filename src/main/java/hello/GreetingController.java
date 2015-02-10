@@ -26,34 +26,45 @@ public class GreetingController {
         return new Greeting("Hello, " + message.getName() + "!");
     }
 
+    // @ClientRequest
     @MessageMapping("/start")
     public void startDebugging(){
         debugger.startDebugging(debugger.connect(5050, this));
     }
 
+    // @ClientRequest
     @MessageMapping("/step")
     public void step(){
         debugger.requestStep();
         debugger.resume();
     }
 
+    // @ClientRequest
     @MessageMapping("/suspend")
     public void suspend(){
         debugger.suspend();
     }
+
+    // @ClientRequest
     @MessageMapping("/resume")
     public void resume(){
         debugger.resume();
     }
 
+    // @ClientRequest
     @MessageMapping("/printframe")
-    @SendTo("/topic/greetings")
-    public Greeting printFrame() throws Exception {
-        return new Greeting(debugger.frameToString());
+    public void requestPrintFrame() {
+        sendStackFrame();
     }
 
+
+    // @DebuggerEvent
     public void onStep() {
-        template.convertAndSend("/topic/greetings", new Greeting(debugger.frameToString()));
+        sendStackFrame();
+    }
+
+    public void sendStackFrame() {
+        template.convertAndSend("/topic/stackframe", debugger.getStackFrameEvaluation());
     }
 
     public void fireGreeting(String message) {

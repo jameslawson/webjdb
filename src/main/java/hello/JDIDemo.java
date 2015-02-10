@@ -137,19 +137,21 @@ public class JDIDemo
         }
     }
 
-    public String frameToString() {
+    public StackFrameEvaluation getStackFrameEvaluation() {
         try {
             StackFrame frame = currentThread.frame(0);
             List<LocalVariable> vars = frame.visibleVariables();
-            StringBuilder s = new StringBuilder();
+            StackFrameEvaluation ret = new StackFrameEvaluation();
             for (LocalVariable v : vars) {
                 Value val = frame.getValue(v);
                 if (val instanceof IntegerValue) {
                     int eval = ((IntegerValue)val).value();
-                    s.append(v.name() + "= '" + eval + "'");
+                    ret.addVariableEvaluation(v.name(), Integer.toString(eval)); 
+                } else {
+                    ret.addVariableEvaluation(v.name(), "?"); 
                 }
             }
-            return s.toString();
+            return ret;
         } catch (AbsentInformationException e) {
         } catch (IncompatibleThreadStateException e) {
         }
