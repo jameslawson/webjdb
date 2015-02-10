@@ -51,12 +51,6 @@ can be done by adding the following to your .bashrc/.zshrc:
 At this point, you can click the *step* and *print frame* buttons to step through the program and 
 print the contents of the current stack frame. 
 
-### Todo
-
-Right now I'm working on:
-- Add a step button
-- Inspecting all variables in current stack and sending this to the browser
-
 ### References
 
 Uses code from: 
