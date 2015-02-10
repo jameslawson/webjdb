@@ -28,7 +28,7 @@
                 });
                 stompClient.subscribe('/topic/stackframe', function(frame){
                     console.log('Stack frame received!');
-                    console.log(frame);
+                    showStackFrame(JSON.parse(frame.body).variableEvaluations);
                 });
                 stompClient.send("/app/start", {}, JSON.stringify({ 'name': name }));
                 socket.onclose = function() {
@@ -68,6 +68,17 @@
             p.appendChild(document.createTextNode(message));
             response.appendChild(p);
         }
+        function showStackFrame(frame) {
+            var f = document.getElementById('stackframe');
+            f.innerHTML = '';
+            console.log(frame);
+            Object.keys(frame).forEach(function(name) {
+                var eval = frame[name];
+                var p = document.createElement('p');
+                p.appendChild(document.createTextNode(name + ':' + eval));
+                f.appendChild(p);
+            });
+        }
     </script>
 </head>
 <body>
@@ -84,6 +95,8 @@
     <!--     <button id="suspend" onclick="suspend();">Suspend</button> -->
     <!--     <button id="resume" onclick="resume();">Resume</button> -->
     <!-- </div> -->
+    <div id="stackframe">
+    </div>
     <div id="conversationDiv">
         <!-- <label>What is your name?</label><input type="text" id="name" /> -->
         <!-- <button id="sendName" onclick="sendName();">Send</button> -->
