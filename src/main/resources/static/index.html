@@ -21,10 +21,10 @@
             stompClient.connect({}, function(frame) {
                 setConnected(true);
                 console.log('Connected: ' + frame);
-                stompClient.subscribe('/topic/greetings', function(greeting){
-                    console.log('Greeting received!');
-                    console.log(greeting);
-                    showGreeting(JSON.parse(greeting.body).content);
+                stompClient.subscribe('/topic/minimessage', function(miniMessage){
+                    console.log('Minimessage received!');
+                    console.log(miniMessage);
+                    showMiniMessage(JSON.parse(miniMessage.body).content);
                 });
                 stompClient.subscribe('/topic/stackframe', function(frame){
                     console.log('Stack frame received!');
@@ -61,7 +61,7 @@
             stompClient.send("/app/hello", {}, JSON.stringify({ 'name': name }));
         }
 
-        function showGreeting(message) {
+        function showMiniMessage(message) {
             var response = document.getElementById('response');
             var p = document.createElement('p');
             p.style.wordWrap = 'break-word';

@@ -68,7 +68,7 @@ public class DebuggingController {
 
     private void sendMiniMessage(String message) {
         System.out.println(message);
-        template.convertAndSend("/topic/greetings", new MiniMessage(message));
+        template.convertAndSend("/topic/minimessage", new MiniMessage(message));
     }
 
 }
