@@ -1,4 +1,4 @@
-package hello;
+package webjdb;
 
 public class HelloMessage {
 

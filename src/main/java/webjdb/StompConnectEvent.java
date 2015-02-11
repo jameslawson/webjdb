@@ -1,4 +1,4 @@
-package hello;
+package webjdb;
 
 import org.springframework.context.ApplicationListener;
 import org.springframework.web.socket.messaging.SessionConnectEvent;

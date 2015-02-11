@@ -1,4 +1,4 @@
-package hello;
+package webjdb;
 
 import java.util.Map;
 import java.util.HashMap;
