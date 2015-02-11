@@ -50,17 +50,23 @@ public class DebuggingController {
         sendStackFrame();
     }
 
-
     // @DebuggerEvent
-    public void onStep() {
+    public void onStepHit(String lineKey) {
         sendStackFrame();
+        sendMiniMessage("Step hit. " + lineKey);
     }
 
-    public void sendStackFrame() {
+    // @DebuggerEvent
+    public void onBreakpointHit(String lineKey) {
+        sendStackFrame();
+        sendMiniMessage("Step hit. " + lineKey);
+    }
+
+    private void sendStackFrame() {
         template.convertAndSend("/topic/stackframe", debugger.getStackFrameEvaluation());
     }
 
-    public void sendMiniMessage(String message) {
+    private void sendMiniMessage(String message) {
         System.out.println(message);
         template.convertAndSend("/topic/greetings", new MiniMessage(message));
     }

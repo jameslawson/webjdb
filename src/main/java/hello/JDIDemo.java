@@ -209,22 +209,12 @@ public class JDIDemo
                         }
                         StackFrame frame = thread.frame(0);
                         List<LocalVariable> vars = frame.visibleVariables();
-                        for (LocalVariable v : vars) {
-                            System.out.println(v.name());
-                            if (v.name().equals("test1")) {
-                                Value val = frame.getValue(v);
-                                if (val instanceof IntegerValue) {
-                                    int eval = ((IntegerValue)val).value();
-                                    controller.sendMiniMessage("test2 " + "= '" + eval + "'");
-                                }
-                            }
-                        }
                         final String sourcePath = event.location().sourcePath();
                         final int lineNumber = event.location().lineNumber();
                         final String method = event.location().method().toString();
                         final String lineKey = sourcePath + ":" + method  + ":" + lineNumber;
-                        controller.sendMiniMessage("Breakpoint hit. " + lineKey);
                         this.suspend();
+                        controller.onBreakpointHit(lineKey);
                     }
                     else if (e instanceof StepEvent)
                     {
@@ -234,9 +224,8 @@ public class JDIDemo
                         final int lineNumber = event.location().lineNumber();
                         final String method = event.location().method().toString();
                         final String lineKey = sourcePath + ":" + method  + ":" + lineNumber;
-                        controller.sendMiniMessage("Step hit. " + lineKey);
                         this.suspend();
-                        controller.onStep();
+                        controller.onStepHit(lineKey);
                     }
                 }
                 events.resume();
