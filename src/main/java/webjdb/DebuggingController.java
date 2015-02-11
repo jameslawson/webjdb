@@ -13,7 +13,7 @@ public class DebuggingController {
     private SimpMessagingTemplate template;
 
     @Autowired
-    private JDIDemo debugger;
+    private Debugger debugger;
 
     public void onConnect(){
         // debugger.startDebugging(debugger.connect(5050, this));

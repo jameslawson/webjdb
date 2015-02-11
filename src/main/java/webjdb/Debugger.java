@@ -45,7 +45,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Scope("singleton")
-public class JDIDemo
+public class Debugger
 {
 
     private DebuggingController controller;
