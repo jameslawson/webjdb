@@ -60,7 +60,7 @@ public class DebuggingController {
         template.convertAndSend("/topic/stackframe", debugger.getStackFrameEvaluation());
     }
 
-    public void fireGreeting(String message) {
+    public void sendMiniMessage(String message) {
         System.out.println(message);
         template.convertAndSend("/topic/greetings", new MiniMessage(message));
     }

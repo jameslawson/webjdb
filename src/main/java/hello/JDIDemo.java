@@ -215,7 +215,7 @@ public class JDIDemo
                                 Value val = frame.getValue(v);
                                 if (val instanceof IntegerValue) {
                                     int eval = ((IntegerValue)val).value();
-                                    controller.fireGreeting("test2 " + "= '" + eval + "'");
+                                    controller.sendMiniMessage("test2 " + "= '" + eval + "'");
                                 }
                             }
                         }
@@ -223,7 +223,7 @@ public class JDIDemo
                         final int lineNumber = event.location().lineNumber();
                         final String method = event.location().method().toString();
                         final String lineKey = sourcePath + ":" + method  + ":" + lineNumber;
-                        controller.fireGreeting("Breakpoint hit. " + lineKey);
+                        controller.sendMiniMessage("Breakpoint hit. " + lineKey);
                         this.suspend();
                     }
                     else if (e instanceof StepEvent)
@@ -234,7 +234,7 @@ public class JDIDemo
                         final int lineNumber = event.location().lineNumber();
                         final String method = event.location().method().toString();
                         final String lineKey = sourcePath + ":" + method  + ":" + lineNumber;
-                        controller.fireGreeting("Step hit. " + lineKey);
+                        controller.sendMiniMessage("Step hit. " + lineKey);
                         this.suspend();
                         controller.onStep();
                     }
