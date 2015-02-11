@@ -1,10 +1,10 @@
 package hello;
 
-public class Greeting {
+public class MiniMessage {
 
     private String content;
 
-    public Greeting(String content) {
+    public MiniMessage(String content) {
         this.content = content;
     }
 

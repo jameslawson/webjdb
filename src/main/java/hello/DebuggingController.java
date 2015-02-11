@@ -21,9 +21,9 @@ public class DebuggingController {
 
     @MessageMapping("/hello")
     @SendTo("/topic/greetings")
-    public Greeting greeting(HelloMessage message) throws Exception {
+    public MiniMessage greeting(HelloMessage message) throws Exception {
         // Thread.sleep(3000); // simulated delay
-        return new Greeting("Hello, " + message.getName() + "!");
+        return new MiniMessage("Hello, " + message.getName() + "!");
     }
 
     // @ClientRequest
@@ -69,7 +69,7 @@ public class DebuggingController {
 
     public void fireGreeting(String message) {
         System.out.println(message);
-        template.convertAndSend("/topic/greetings", new Greeting(message));
+        template.convertAndSend("/topic/greetings", new MiniMessage(message));
     }
 
 }
