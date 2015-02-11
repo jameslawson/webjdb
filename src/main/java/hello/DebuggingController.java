@@ -19,13 +19,6 @@ public class DebuggingController {
         // debugger.startDebugging(debugger.connect(5050, this));
     }
 
-    @MessageMapping("/hello")
-    @SendTo("/topic/greetings")
-    public MiniMessage greeting(HelloMessage message) throws Exception {
-        // Thread.sleep(3000); // simulated delay
-        return new MiniMessage("Hello, " + message.getName() + "!");
-    }
-
     // @ClientRequest
     @MessageMapping("/start")
     public void startDebugging(){
