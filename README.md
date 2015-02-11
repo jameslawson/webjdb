@@ -29,31 +29,27 @@ and send the value of a variable to be displayed in the browser.
 - JDK >= 1.8.0_05 (needs JDI which belongs to JDK's tools.jar)
 
 
-You may need to set your `JAVA_HOME` environment variable:
+
+
+### Getting started
+
+You need to download the [Java Development Kit 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html). 
+You may also need to set your `JAVA_HOME` environment variable. This 
+can be done by adding the following to your .bashrc/.zshrc:
 
     export JAVA_HOME=$(/usr/libexec/java_home)
 
 
-### Getting started
 1. clone the repo then cd to the root of the project.
 2. Install gradle `brew install gradle`.
 3. Compile the target `javac -g Target.java` (-g flag needed, it adds debug info)
-4. Run the target application, telling it to listen on port 5050: `runtarget.sh`
-5. Build and run the webserver+debugger `./gradlew bootRun`
+4. In one terminal session, run the target application, telling it to listen on port 5050: `runtarget.sh`
+5. In another terminal session, build and run the webserver+debugger: `./gradlew bootRun`
 6. Open your browser at localhost:8080
-7. Click connect
+7. Click the *connect* button. This tells the debugger to connect to the target that's listening on port 5050.
 
-After the above five steps, the debugger should have connected to the target, Target.java 
-(the program we are debugging), 
-looked at the stack frame of the main method, seen that the variable called `test` has 
-value 10 and have sent `test = 10` via websockets to the browser. Finally, the client browser 
-should have printed `test = 10` on the webpage for the user to see.
-
-### Todo
-
-Right now I'm working on:
-- Add a step button
-- Inspecting all variables in current stack and sending this to the browser
+At this point, you can click the *step* and *print frame* buttons to step through the program and 
+print the contents of the current stack frame. 
 
 ### References
 
