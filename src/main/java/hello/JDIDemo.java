@@ -48,14 +48,14 @@ import org.springframework.stereotype.Service;
 public class JDIDemo
 {
 
-    private GreetingController greetingController;
+    private DebuggingController controller;
     private VirtualMachine virtualMachine;
     private ThreadReference currentThread;
     private boolean suspended = true;
 
-    public VirtualMachine connect(int port, GreetingController controller) 
+    public VirtualMachine connect(int port, DebuggingController controller) 
     {
-        greetingController = controller;
+        this.controller = controller;
         // VirtualMachineManager has the list of connections
         VirtualMachineManager manager = Bootstrap.virtualMachineManager();
 
@@ -215,7 +215,7 @@ public class JDIDemo
                                 Value val = frame.getValue(v);
                                 if (val instanceof IntegerValue) {
                                     int eval = ((IntegerValue)val).value();
-                                    greetingController.fireGreeting("test2 " + "= '" + eval + "'");
+                                    controller.fireGreeting("test2 " + "= '" + eval + "'");
                                 }
                             }
                         }
@@ -223,7 +223,7 @@ public class JDIDemo
                         final int lineNumber = event.location().lineNumber();
                         final String method = event.location().method().toString();
                         final String lineKey = sourcePath + ":" + method  + ":" + lineNumber;
-                        greetingController.fireGreeting("Breakpoint hit. " + lineKey);
+                        controller.fireGreeting("Breakpoint hit. " + lineKey);
                         this.suspend();
                     }
                     else if (e instanceof StepEvent)
@@ -234,9 +234,9 @@ public class JDIDemo
                         final int lineNumber = event.location().lineNumber();
                         final String method = event.location().method().toString();
                         final String lineKey = sourcePath + ":" + method  + ":" + lineNumber;
-                        greetingController.fireGreeting("Step hit. " + lineKey);
+                        controller.fireGreeting("Step hit. " + lineKey);
                         this.suspend();
-                        greetingController.onStep();
+                        controller.onStep();
                     }
                 }
                 events.resume();

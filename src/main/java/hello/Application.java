@@ -12,6 +12,5 @@ public class Application {
         ConfigurableApplicationContext context 
             = SpringApplication.run(Application.class, args);
         JDIDemo debugger = context.getBean(JDIDemo.class);
-        GreetingController controller = context.getBean(GreetingController.class);
     }
 }

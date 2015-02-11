@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 @Controller
-public class GreetingController {
+public class DebuggingController {
 
     @Autowired
     private SimpMessagingTemplate template;

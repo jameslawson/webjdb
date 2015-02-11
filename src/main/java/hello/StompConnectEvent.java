@@ -11,11 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Component
 public class StompConnectEvent implements ApplicationListener<SessionConnectedEvent>
 {
-    private GreetingController controller;
+    private DebuggingController controller;
 
     @Autowired
-    public StompConnectEvent(final GreetingController greetingController) {
-        controller = greetingController;
+    public StompConnectEvent(final DebuggingController debuggingController) {
+        controller = debuggingController;
     }
 
     @Override
