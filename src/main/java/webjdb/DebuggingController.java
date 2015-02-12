@@ -59,7 +59,7 @@ public class DebuggingController {
     // @DebuggerEvent
     public void onBreakpointHit(String lineKey) {
         sendStackFrame();
-        sendMiniMessage("Step hit. " + lineKey);
+        sendMiniMessage("Breakpoint hit. " + lineKey);
     }
 
     private void sendStackFrame() {
