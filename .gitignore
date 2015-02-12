@@ -49,3 +49,11 @@ gradlew.bat
 */target
 /build
 */build
+
+# npm Files #
+#############
+node_modules
+
+# bower files #
+###############
+src/main/resources/static/bower_components

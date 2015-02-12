@@ -1,0 +1,11 @@
+{
+  "name": "webjdb",
+  "version": "0.0.0",
+  "homepage": "https://github.com/jameslawson/webjdb",
+  "repository": "git@github.com:jameslawson/webjdb.git",
+  "devDependencies": {
+    "bower": "^1.3.12",
+    "grunt": "^0.4.5",
+    "grunt-contrib-jshint": "^0.11.0"
+  }
+}
