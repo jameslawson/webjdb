@@ -43,7 +43,7 @@ can be done by adding the following to your .bashrc/.zshrc:
 1. clone the repo then cd to the root of the project.
 2. Install gradle `brew install gradle`.
 3. Compile the target `javac -g Target.java` (-g flag needed, it adds debug info)
-4. In one terminal session, run the target application, telling it to listen on port 5050: `runtarget.sh`
+4. In one terminal session, run the target application, telling it to listen on port 5050: `sh runtarget.sh`
 5. In another terminal session, build and run the webserver+debugger: `./gradlew bootRun`
 6. Open your browser at localhost:8080
 7. Click the *connect* button. This tells the debugger to connect to the target that's listening on port 5050.
