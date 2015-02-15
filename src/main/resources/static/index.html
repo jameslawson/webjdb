@@ -4,29 +4,17 @@
     <title>Hello WebSocket</title>
     <script src="bower_components/sockjs-client/dist/sockjs.js"></script>
     <script src="bower_components/stomp-websocket/lib/stomp.js"></script>
-    <script type="text/javascript" src="main.js"></script>
+    <script src="bower_components/react/react.js"></script>
+    <script src="bower_components/react/JSXTransformer.js"></script>
+    <script type="text/javascript" src="debugger-service.js"></script>
+    <!--<script src="main.js"></script>-->
 </head>
 <body>
 <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable
     Javascript and reload this page!</h2></noscript>
-<div>
-    <div>
-        <button id="connect" onclick="connect();">Connect</button>
-        <button id="step" onclick="step();">Step</button>
-        <button id="printframe" onclick="printframe();">Print Frame</button>
-        <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
-    </div>
-    <!-- <div> -->
-    <!--     <button id="suspend" onclick="suspend();">Suspend</button> -->
-    <!--     <button id="resume" onclick="resume();">Resume</button> -->
-    <!-- </div> -->
-    <div id="stackframe">
-    </div>
-    <div id="conversationDiv">
-        <!-- <label>What is your name?</label><input type="text" id="name" /> -->
-        <!-- <button id="sendName" onclick="sendName();">Send</button> -->
-        <p id="response"></p>
-    </div>
+<div id="debugger">
+
 </div>
+<script type="text/jsx" src="ui/debugger.jsx"></script>
 </body>
 </html>
